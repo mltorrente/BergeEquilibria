@@ -1,0 +1,21 @@
+-- compute the real roots of a polynomial through factorization and approximation
+Define Roots(Pol)
+  Ris:=Factor(Pol);
+  F:=Ris.factors;
+  M:=Ris.multiplicities;
+  Zeros:=[];
+  For I:=1 To Len(M) Do
+    If M[I]=1 Then
+      C:=coefficients(F[I]);
+      If Len(C)=2 Then
+	append(ref Zeros,-C[2]/C[1]);
+      Else
+	append(ref Zeros,zero(BaseRing(owner(F[I]))));
+      EndIf;
+    Else
+      append(ref Zeros,RealRootsApprox(F[I]));
+      Zeros:=flatten(Zeros);
+    EndIf;
+  EndFor;
+  return Zeros;
+EndDefine; -- Roots

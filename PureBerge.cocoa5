@@ -1,0 +1,62 @@
+-----------------------------------------------------------------------
+-- Main code to compute Pure Berge equilibria for N-player games
+-- N=number of players
+-- D=[d_1,..,d_N] vector of number of strategies (minus 1)
+-- ValuesU = vector of payoff functions
+-----------------------------------------------------------------------
+Define PureBerge(N,D,ValuesU)
+  PureBerge:=[];
+  ListD:=[0..D[J]|J In 1..N];
+  ProdD:=CartesianProductList(ListD);
+
+  NewValues:=[];
+  
+  For K:=1 To Len(ProdD) Do
+    NewV:=[];
+    For I:=1 To N Do
+      values:=[];
+      For L:=1 To Len(ProdD) Do
+	If not(L=K) and ProdD[K][I]=ProdD[L][I] Then
+	  append(ref values, ValuesU[I][K]-ValuesU[I][L]);
+	EndIf;
+      EndFor;
+      append(ref NewV, min(values));
+    EndFor;
+    append(ref NewValues, NewV);
+  EndFor;
+
+  -- If N=2 Then
+  --   println [NewValues[1],NewValues[2]];
+  --   println [NewValues[3],NewValues[4]];
+  -- Elif N=3 Then
+  --   println [NewValues[1],NewValues[3]];
+  --   println [NewValues[5],NewValues[7]];
+  --   println;
+  --   println [NewValues[2],NewValues[4]];
+  --   println [NewValues[6],NewValues[8]];
+  -- Else
+  --   println "New Values = ", NewValues;    
+  -- EndIf;
+    
+  For K:=1 To Len(NewValues) Do
+    NewV:=NewValues[K];
+    Pos:=1;
+    Flag:=true;
+    While Flag and Pos<=N Do
+      If NewV[Pos]<0 Then
+	Flag:=false;
+      else
+	Pos:=Pos+1;
+      endif;
+    EndWhile;
+
+    If Flag and Pos=N+1 then
+      append(ref PureBerge, ProdD[K]);
+    EndIf;
+  EndFor;
+
+  return PureBerge;
+EndDefine; -- PureBerge
+
+
+

@@ -1,0 +1,184 @@
+-- compute all Berge equilibria 
+Define AllBerge(N,D,ValuesU)
+  --Construct and use the polynoamial ring P=QQ[a[0..D[1]],b[0..D[2]]], Lex;
+  MD:=Max(D);
+  R := NewPolyRing(RingQQ(), SymbolRange("x",[1,0],[N,MD]), LexMat(N*(MD+1)),1);
+
+  XX:=indets(R);
+  X:=[];--indeterminates listed according to I In 1..N
+  S:=0;
+  For I:=1 To N Do    
+    ListX:=[XX[KK]|KK In S+1..S+D[I]+1];
+    append(ref X,ListX);
+    S:=S+D[I]+1;
+  EndFor;
+
+  ListD:=[0..D[I]|I In 1..N];
+  ProdD:=CartesianProductList(ListD);
+  ZN1:=NewList(N-1);
+  --construct u_i^j in ListU
+  phi:=CanonicalHom(RingQQ(),BaseRing(R));
+  phi2:=CanonicalHom(BaseRing(R),R);
+  ListU:=[];
+  For I:=1 To N Do
+    IntList:=[];
+    ProdDI:=CartesianProductList(WithoutNth(ListD,I));
+    Foreach J In ProdDI Do
+      NewPol:=zero(R);
+      For KK:=0 To D[I] Do
+	Seq:=J;
+	If I<N Then
+	  insert(ref Seq,I,KK);
+	Else
+	  append(ref Seq,KK);
+	EndIf;
+	Pos:=1;
+	While (not(ProdD[Pos]=Seq)) Do
+	  Pos:=Pos+1;
+	EndWhile;
+	NewPol:=NewPol+phi2(phi(ValuesU[I,Pos]))*X[I,KK+1];
+      EndFor;
+      append(ref IntList, NewPol);			
+    EndForeach;
+    append(ref ListU, IntList);
+  EndFor;
+
+  --construct p_i^j in ListP and construct polynomials of the system in ListF
+  ListP:=[];
+  ListF:=[];
+  For I:=1 To N Do
+    IntList:=[];
+    IntListF:=[];
+    ProdDI:=CartesianProductList(WithoutNth(ListD,I));
+    --construct p_i^0
+    NewPol:=zero(R);
+    Ui:=ListU[I];
+    --Xi:=X[I];
+    XRi:=WithoutNth(X,I);
+    For KK:=2 To Len(ProdDI) Do
+      Esp:=ProdDI[KK];
+      SigmaMenoI:=one(R);
+      For HH:=1 To Len(Esp) Do
+	E:=Esp[HH];
+	XRiH:=XRi[HH];
+	SigmaMenoI:=SigmaMenoI*XRiH[E+1];
+      EndFor;
+      NewPol:=NewPol+SigmaMenoI*(Ui[KK]-Ui[1]);
+    EndFor;
+    append(ref IntList, NewPol);
+    Esp:=ProdDI[1];
+    SigmaMenoI:=one(R);
+    For HH:=1 To Len(Esp) Do
+      E:=Esp[HH];
+      XRiH:=XRi[HH];--e' una lista
+      SigmaMenoI:=SigmaMenoI*XRiH[E+1];
+    EndFor;
+    append(ref IntListF, SigmaMenoI*NewPol);
+    NewPol:=zero(R);
+    For KK:=2 To Len(ProdDI) Do
+      NewPol:=IntList[1]+(Ui[1]-Ui[KK]);
+      Esp:=ProdDI[KK];
+      SigmaMenoI:=one(R);
+      For HH:=1 To Len(Esp) Do
+	E:=Esp[HH];
+	XRiH:=XRi[HH];
+	SigmaMenoI:=SigmaMenoI*XRiH[E+1];
+      EndFor;
+      append(ref IntList, NewPol);
+      append(ref IntListF, SigmaMenoI*NewPol);
+    EndFor;
+    append(ref ListP, IntList);
+    append(ref ListF, IntListF);
+  EndFor;
+
+  --construct polynomials sum(x[i,j])=1
+  ListS:=[];
+  For I:=1 To N Do
+    Xi:=X[I];
+    NewPol:=sum(Xi)-one(R);
+    append(ref ListS, NewPol);
+  EndFor;
+
+  --construct the ideal of ListF and ListS
+  ListPolys:=concat(flatten(ListF), ListS);
+  --println "ListPolys = ", ListPolys;
+  II:=ideal(ListPolys); 
+  GG:=ReducedGBasis(II);
+  --println "listGG = ", GG;
+
+  -- find all the Berge equilibria
+  ListPF:=flatten(ListP);
+  If II=ideal(R,[one(R)]) Then  -- no solutions in this case
+    TypeSol:=0;
+    Berge:=[];
+  Else
+    --println " dimension is = ", dim(R/II);
+    If dim(R/II)=0 Then         -- case of finite number of solutions
+      Solutions:=Solve(ListPolys,R);
+      --throw away the non-positive solutions and the ones that do not satisfy the positive constraints
+      K:=1;
+      While K<=Len(Solutions) Do
+	Sol:=Solutions[K];
+	--check that all the components are positive
+	PosFlag:=1;
+	H:=1;
+	While H<=Len(Sol) And PosFlag=1 Do
+	  If Sol[H]<0 Then
+	    PosFlag:=0;
+	  Else
+	    H:=H+1;
+	  EndIf;
+	EndWhile;
+	If PosFlag=0 Then
+	  remove(ref Solutions, K);
+	Else
+	  --check that the all the positive constraints are satisfied
+	  phi3 := PolyAlgebraHom(R, BaseRing(R), Solutions[K]);
+	  ConstraintFlag:=1;
+	  L:=1;
+	  While L<=Len(ListPF) And ConstraintFlag=1 Do
+	    If phi3(ListPF[L])<0 Then
+	      ConstraintFlag:=0;
+	    Else
+	      L:=L+1;
+	    EndIf;
+	  EndWhile;
+	  If ConstraintFlag=0 Then
+	    remove(ref Solutions, K);
+	  Else
+	    K:=K+1;
+	  EndIf;
+	EndIf;  
+      EndWhile;
+      If Solutions=[] Then  -- no solutions in this case
+	TypeSol:=0;
+	Berge:=[];
+      Else
+	TypeSol:=1;
+	Berge:=Solutions;
+      EndIf;
+    Else                   -- infinitely many solutions in this case
+      TypeSol:=-1;
+      --IIR:=radical(II);
+      --NewGG:=ReducedGBasis(IIR);
+      --ListPFNew:=[NF(El,IIR)|El In ListPF];
+      ListPFNew:=[NF(El,II)|El In ListPF];
+      Berge:=[XX,GG,ListPFNew];
+      indent(GG);
+    EndIf;
+  EndIf;
+
+  Res:=[Berge,TypeSol];
+  return Res;
+
+EndDefine; -- AllBerge
+
+
+
+
+
+
+
+
+
+

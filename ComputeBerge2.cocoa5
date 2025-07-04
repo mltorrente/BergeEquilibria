@@ -1,0 +1,94 @@
+-----------------------------------------------------------------------
+-- Use this code to compute Berge equilibria for a 2-player game 
+-----------------------------------------------------------------------
+
+-- number of players (do not change it)
+N:=2;
+
+-- insert here the payoff functions
+A:=Mat([[2,0],[0,1]]);   --BATTLE OF THE SEXES
+B:=Mat([[1,0],[0,2]]);
+
+
+-- compute the vector of the number of strategies for each player D=[d_1, d_2]
+-- (recall that in our notation the number of strategies of player i is d_i+1)
+D:=[];
+If NumRows(A)=NumCols(A) Then
+  append(ref D, NumRows(A)-1);
+EndIf;
+If NumRows(B)=NumCols(B) Then
+  append(ref D, NumRows(B)-1);
+EndIf;
+If not(len(D)=N) Then error("Matrix must be square");EndIf;
+
+-- convert the payoff functions to a vector format
+ValuesU:=[Flatten(GetRows(A)),Flatten(GetRows(B))];
+
+
+-------------------------------------------------------------------------------------------
+-- PURE BERGE STRATEGIES
+-- use this part of the code if you want to compute the Pure Berge strategies of the game
+-------------------------------------------------------------------------------------------
+-- upload the main code 
+source "PureBerge.cocoa5";  -- this may need to be modified depending on the current directory
+
+-- use the main function PureBerge on the game
+PureBergeEq:=PureBerge(N,D,ValuesU);
+
+-- print the set of Pure Berge equilibria of the game
+println;
+println "Pure Berge Equilibria = ", PureBergeEq;
+println;
+
+-------------------------------------------------------------------------------------------------------
+-- COMPLETELY MIXED BERGE STRATEGIES
+-- use this part of the code if you want to compute the completely Mixed Berge strategies of the game
+-------------------------------------------------------------------------------------------------------
+-- upload the main code 
+source "MixedBerge.cocoa5";  -- this may need to be modified depending on the current directory
+
+-- use the main function MixedBerge on the game
+MixedBergeEq:=MixedBerge(N,D,ValuesU);
+
+-- print the set of completely Mixed Berge equilibria of the game
+println;
+println "Mixed Berge Equilibria = ", MixedBergeEq;
+println;
+
+-------------------------------------------------------------------------------------------------------
+-- ALL BERGE STRATEGIES
+-- use this part of the code if you want to compute the all Berge equilbria of the game
+-------------------------------------------------------------------------------------------------------
+-- upload the main and supplementary code; the following lines may need to be modified depending on the current directory 
+source "Roots.cocoa5";  
+source "AllBerge.cocoa5";  
+source "Solve.cocoa5";
+
+-- use the main function AllBerge on the game
+Ris:=AllBerge(N,D,ValuesU);
+BergeEq:=Ris[1];
+TypeSol:=Ris[2];
+
+-- print the all Berge equilibria of the game
+println;
+If TypeSol=0 Then
+  println "There are no Berge Equilibria";
+Elif TypeSol=-1 Then
+  println "Berge equilibria (degenerate case) ";
+  println;
+  println "Berge = ", BergeEq[1];
+  println "equality conditions = ", BergeEq[2];
+  println "positive conditions = ";
+  Foreach El In BergeEq[3] Do
+    println(El);
+  EndForeach;
+  println;
+Else
+println "All Berge equilibria = ";
+Foreach El In BergeEq Do
+  println El;
+EndForeach;
+EndIf;
+
+
+

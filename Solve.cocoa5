@@ -1,0 +1,65 @@
+-- compute the real roots of a ZERO-DIMENSIONAL polynomial system F, R is the polynomials ring with Lex ordering
+Define Solve(F,R)
+  phi:=CoeffEmbeddingHom(R);
+  II:=ideal(F);  
+  GG:=ReducedGBasis(II);
+  Indts:=indets(R);
+  N:=len(Indts);
+  S:=[];
+  SLPrev:=[];
+  For L:=N-1 to 0 step -1 Do
+    --println "L = ", L;
+    SL:=[];
+    GGL:=[];
+    --costruisco GGL = GG \cap K[x[L+1],...,x[N]]
+    Foreach Pol In GG Do
+      PolCopy:=Pol;
+      E:=[0|K In 1..N];
+      While not(PolCopy=zero(R)) Do
+	E:=E+exponents(PolCopy);
+	PolCopy:=PolCopy-LM(PolCopy);
+      EndWhile;
+      If [E[K]|K In 1..L]=[0|K In 1..L] Then
+	Append(ref GGL, Pol);
+      EndIf;
+    EndForeach;
+    If L=N-1 Then
+      --GGL:=[last(GG)];
+      SL:=Roots(GGL[1]);
+      SL:=[[El]|El In SL];
+    Else
+      --costruisco Leading Coefficients Polynomials di GGL
+      LCP:=[];
+      Foreach Pol In GGL Do
+	NewLCP:=zero(R);
+	D:=deg(Pol,Indts[L+1]);
+	Foreach El In support(Pol) Do
+	  EE:=exponents(El);
+	  If EE[L+1]=D Then
+	    C:=CoeffOfTerm(Pol,El);
+	    EE[L+1]:=0;
+	    NewLCP:=NewLCP+C*MakeTerm(R,EE);
+	  EndIf;
+	EndForeach;
+	Append(ref LCP, NewLCP);
+      EndForeach;
+      -- check if Point In SLPrev can be used to lift up to a solution
+      Foreach Point In SLPrev Do
+	mySubst:=[[Indts[K],phi(Point[K-L-1])]|K In L+2..N];
+	If not([subst(El,mySubst)|El In LCP]=[zero(R)|K In 1..Len(LCP)]) Then
+	  GGLEval:=[subst(Pol,mySubst)|Pol In GGL];
+	  RGB:=ReducedGBasis(Ideal(GGLEval));
+	  PartialSol:=Roots(RGB[1]);    ----check if it is ok!
+	  Foreach El In PartialSol Do
+	    append(ref SL, flatten([El,Point],1));
+	  EndForeach;
+	EndIf;
+      EndForeach;
+    EndIf;
+    --println "SL = ",SL;
+    SLPrev:=SL;
+  EndFor;
+  
+  S:=SL;
+  Return S;
+EndDefine; -- Solve
