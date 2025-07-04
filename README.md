@@ -8,6 +8,7 @@ The algorithms are described in detail in the accompanying publication [referenc
 - AllBerge.cocoa5 — Computes all Berge equilibria (including pure and mixed).
 - MixedBerge.cocoa5 — Computes completely mixed Berge equilibria.
 - PureBerge.cocoa5 — Computes pure-strategy Berge equilibria.
+  
 Each file contains the code to identify the respective equilibria using polynomial systems.
 
 # Example Usage Files
