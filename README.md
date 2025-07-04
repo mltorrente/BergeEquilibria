@@ -1,6 +1,10 @@
 # BergeEquilibria
-Code for the computation of Berge equilibria
-This package includes the implementation of three algorithms for computing Berge equilibria in regualr finite normal-form games. The algorithms are written in CoCoA (a computer algebra system) and are capable of handling games with any number of players and strategies.
+Code for the computation of Berge equilibria.
+
+This package includes the implementation of three algorithms for computing Berge equilibria in regular finite normal-form games. 
+
+The algorithms are written in CoCoA (a computer algebra system) and are capable of handling games with any number of players and strategies.
+
 The algorithms are described in detail in the accompanying publication [reference to be added]!!!
 
 
