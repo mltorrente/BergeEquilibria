@@ -13,8 +13,8 @@ Each file contains the code to identify the respective equilibria using polynomi
 
 # Example Usage Files
 To demonstrate how to run the algorithms, the following example files are included:
-ComputeBerge2.cocoa5 — Example for a 2-player game.
-ComputeBerge3.cocoa5 — Example for a 3-player game.
+- ComputeBerge2.cocoa5 — Example for a 2-player game.
+- ComputeBerge3.cocoa5 — Example for a 3-player game.
 
 To execute these examples:
 
