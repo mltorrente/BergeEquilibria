@@ -4,6 +4,7 @@ This package includes the implementation of three algorithms for computing Berge
 The algorithms are described in detail in the accompanying publication [reference to be added].
 
 🔧 Main Algorithm Files
+# Main Algorithm Files
 AllBerge.cocoa5 — Computes all Berge equilibria (including pure and mixed).
 MixedBerge.cocoa5 — Computes completely mixed Berge equilibria.
 PureBerge.cocoa5 — Computes pure-strategy Berge equilibria.
