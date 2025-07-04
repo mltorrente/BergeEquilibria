@@ -17,11 +17,11 @@ To demonstrate how to run the algorithms, the following example files are includ
 - ComputeBerge3.cocoa5 — Example for a 3-player game.
 
 To execute these examples:
-
-Launch CoCoA on your machine.
+- Launch CoCoA on your machine.
 - Open the CoCoA shell.
 - Copy and paste the contents of one of the example files into the shell.
-- CoCoA will automatically run the computation and return the corresponding Berge equilibria.
+
+CoCoA will automatically run the computation and return the corresponding Berge equilibria.
 
 # Requirements
 CoCoA version 5 must be installed on your system.
