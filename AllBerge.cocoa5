@@ -45,9 +45,11 @@ Define AllBerge(N,D,ValuesU)
 
   --construct p_i^j in ListP and construct polynomials of the system in ListF
   ListP:=[];
+  ListPW0:=[];
   ListF:=[];
   For I:=1 To N Do
     IntList:=[];
+    IntListW0:=[];
     IntListF:=[];
     ProdDI:=CartesianProductList(WithoutNth(ListD,I));
     --construct p_i^0
@@ -73,7 +75,7 @@ Define AllBerge(N,D,ValuesU)
       XRiH:=XRi[HH];--e' una lista
       SigmaMenoI:=SigmaMenoI*XRiH[E+1];
     EndFor;
-    append(ref IntListF, SigmaMenoI*NewPol);
+    --append(ref IntListF, SigmaMenoI*NewPol);
     NewPol:=zero(R);
     For KK:=2 To Len(ProdDI) Do
       NewPol:=IntList[1]+(Ui[1]-Ui[KK]);
@@ -85,11 +87,16 @@ Define AllBerge(N,D,ValuesU)
 	SigmaMenoI:=SigmaMenoI*XRiH[E+1];
       EndFor;
       append(ref IntList, NewPol);
+      append(ref IntListW0, NewPol);
       append(ref IntListF, SigmaMenoI*NewPol);
     EndFor;
     append(ref ListP, IntList);
+    append(ref ListPW0, IntListW0);
     append(ref ListF, IntListF);
   EndFor;
+  println;println "ListP = ", ListP;
+  println;println "ListPW0 = ", ListPW0;
+  println;println "ListF = ", ListF;
 
   --construct polynomials sum(x[i,j])=1
   ListS:=[];
@@ -114,7 +121,8 @@ Define AllBerge(N,D,ValuesU)
   Else
     --println " dimension is = ", dim(R/II);
     If dim(R/II)=0 Then         -- case of finite number of solutions
-      Solutions:=Solve(ListPolys,R);
+      --Solutions:=Solve(ListPolys,R);
+      Solutions:=SetOfZeros(ListPolys,R);
       --throw away the non-positive solutions and the ones that do not satisfy the positive constraints
       K:=1;
       While K<=Len(Solutions) Do

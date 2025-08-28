@@ -5,10 +5,13 @@
 -- number of players (do not change it)
 N:=2;
 
--- insert here the payoff functions
+---- insert here the payoff functions
 A:=Mat([[2,0],[0,1]]);   --BATTLE OF THE SEXES
 B:=Mat([[1,0],[0,2]]);
 
+-- insert here the payoff functions
+--A:=Mat([[2,2],[2,2]]);   
+--B:=Mat([[1,2],[2,2]]);
 
 -- compute the vector of the number of strategies for each player D=[d_1, d_2]
 -- (recall that in our notation the number of strategies of player i is d_i+1)
@@ -61,8 +64,9 @@ println;
 -------------------------------------------------------------------------------------------------------
 -- upload the main and supplementary code; the following lines may need to be modified depending on the current directory 
 source "Roots.cocoa5";  
-source "AllBerge.cocoa5";  
-source "Solve.cocoa5";
+source "AllBerge.cocoa5";
+source "SetOfZeros.cocoa5";
+--source "Solve.cocoa5";
 
 -- use the main function AllBerge on the game
 Ris:=AllBerge(N,D,ValuesU);

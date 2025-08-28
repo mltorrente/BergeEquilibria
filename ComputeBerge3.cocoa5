@@ -12,15 +12,34 @@ D:=[1,1,1]; --2 possibilities for each individual
 -- C1=[ (0,12,11) (11,6,3);     C2=[ (6,7,11)  (1,8,3);     
 --      (6,10,0)  (6,8,2) ]          (4,12,14) (8,1,7)]
 -- then
-A00:=[0,12,11];
-A01:=[11,6,3];
-A10:=[6,10,0];
-A11:=[6,8,2];
-B00:=[6,7,11];
-B01:=[1,8,3];
-B10:=[4,12,14];
-B11:=[8,1,7];
+-- A00:=[0,12,11];
+-- A01:=[11,6,3];
+-- A10:=[6,10,0];
+-- A11:=[6,8,2];
+-- B00:=[6,7,11];
+-- B01:=[1,8,3];
+-- B10:=[4,12,14];
+-- B11:=[8,1,7];
 
+
+-- -- example Mixed Berge Equilibria = [3/4,  1/4,  3/4,  1/4,  1/2,  1/2]
+-- A00:=[10,10,20];
+-- A01:=[0,0,20];
+-- A10:=[0,0,10];
+-- A11:=[30,30,10];
+-- B00:=[10,10,10];
+-- B01:=[0,0,10];
+-- B10:=[0,0,20];
+-- B11:=[30,30,20];
+
+A00:=[0,2,7];
+A01:=[10,8,3];
+A10:=[10,8,3];
+A11:=[0,2,7];
+B00:=[10,8,3];
+B01:=[0,2,7];
+B10:=[0,2,7];
+B11:=[10,8,3];
 
 -- convert the payoff functions to a vector format
 -- vector ValuesU is listed according to each player i and according to the order of the cartesian product
@@ -70,7 +89,8 @@ println;
 -- upload the main and supplementary code; the following lines may need to be modified depending on the current directory 
 source "Roots.cocoa5";   -- this needs to be modified according to the folder
 source "AllBerge.cocoa5";   -- this needs to be modified according to the folder
-source "Solve.cocoa5";
+source "SetOfZeros.cocoa5";
+--source "Solve.cocoa5";
 
 -- use the main function AllBerge on the game
 Ris:=AllBerge(N,D,ValuesU);
