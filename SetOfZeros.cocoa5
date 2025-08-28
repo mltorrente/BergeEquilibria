@@ -1,0 +1,48 @@
+-- compute the real roots of a ZERO-DIMENSIONAL polynomial system F, R is the polynomials ring with Lex ordering
+Define SetOfZeros(F,R)
+  Z:=[];
+  phi:=CoeffEmbeddingHom(R);
+  II:=ideal(F);
+  -- check that the ideal II is zero-dimensional
+  If dim(R/II)=0 Then 
+    Indts:=indets(R);
+    N:=len(Indts);
+    GG:=[];
+    HH:=[];
+    For I:=1 To N Do
+      RGB:=ReducedGBasis(Elim(WithoutNth(Indts,I),II));
+      Append(ref GG,RGB[1]);
+      Append(ref HH, GG[I]/gcd(GG[I],deriv(GG[I],Indts[I])));
+    EndFor;
+    II:=ideal(flatten([F,HH]));
+    QB:=QuotientBasis(II);
+    D:=Len(QB);
+    C:=[zero(R)|I In 1..N-1];
+    While not(deg(HH[N])=D) Do
+      C:=RandomTuple(-9..9,N-1);
+      C:=[phi(C[I])|I In 1..N-1];
+      NewIndts:=Indts;
+      NewIndts[N]:=Indts[N]-sum([C[I]*Indts[I]|I In 1..N-1]);
+      phi2:=PolyAlgebraHom(R,R,NewIndts);
+      NewF:=[phi2(Pol)|Pol In F];
+      RGB:=ReducedGBasis(Elim(WithoutNth(Indts,N),Ideal(NewF)));
+      HH[N]:=RGB[1];
+      F:=NewF;
+    EndWhile;
+    RGB:=ReducedGBasis(Ideal(F));
+    GG:=[];
+    For I:=1 To N-1 Do
+      append(ref GG,-RGB[I]+LM(RGB[I]));
+    EndFor;
+    append(ref GG, RGB[N]);
+    AA:=Roots(GG[N]);
+    Foreach El In AA Do
+      Val:=[subst(GG[I],Indts[N],phi(El))|I In 1..N-1];
+      Value:=flatten([Val,El-sum([C[J]*Val[J]|J In 1..N-1])]);
+      Append(ref Z,[ConstantCoeff(Value[J])|J In 1..Len(Value)]);
+    EndForeach;
+  Else
+    PrintLn "Ideal is positive dimensional";
+  EndIf;
+    Return Z;
+EndDefine; -- SetOfZeros
