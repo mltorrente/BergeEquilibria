@@ -94,9 +94,9 @@ Define AllBerge(N,D,ValuesU)
     append(ref ListPW0, IntListW0);
     append(ref ListF, IntListF);
   EndFor;
-  println;println "ListP = ", ListP;
-  println;println "ListPW0 = ", ListPW0;
-  println;println "ListF = ", ListF;
+  --println;println "ListP = ", ListP;
+  --println;println "ListPW0 = ", ListPW0;
+  --println;println "ListF = ", ListF;
 
   --construct polynomials sum(x[i,j])=1
   ListS:=[];
@@ -121,8 +121,30 @@ Define AllBerge(N,D,ValuesU)
   Else
     --println " dimension is = ", dim(R/II);
     If dim(R/II)=0 Then         -- case of finite number of solutions
+      -- compute the radical of II
+      GG:=[];
+      For I:=1 To Len(XX) Do
+	RGB:=ReducedGBasis(Elim(WithoutNth(XX,I),II));
+	Append(ref GG,RGB[1]);
+	GG[I]:=GG[I]/gcd(GG[I],deriv(GG[I],XX[I]));
+      EndFor;
+      ListPolys:=flatten([ListPolys,GG]);
+      II:=ideal(ListPolys);
+   
+      -- compute the set of zeros of ListPolys
       --Solutions:=Solve(ListPolys,R);
-      Solutions:=SetOfZeros(ListPolys,R);
+      --Solutions:=SetOfZeros(ListPolys,R);
+      Sol:=RationalSolve(ListPolys);
+      Solutions:=Sol.AffinePts;
+      For KK:=1 To Len(Solutions) Do
+	Sol:=Solutions[KK];
+	For I:=1 To Len(Sol) Do
+	  Sol[I]:=ConstantCoeff(Sol[I]);
+	EndFor;
+	Solutions[KK]:=Sol;
+      EndFor;
+      --PrintLn "Solutions =", Solutions;
+
       --throw away the non-positive solutions and the ones that do not satisfy the positive constraints
       K:=1;
       While K<=Len(Solutions) Do
