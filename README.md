@@ -5,7 +5,9 @@ This package includes the implementation of three algorithms for computing Berge
 
 The algorithms are written in CoCoA (a computer algebra system) and are capable of handling games with any number of players and strategies.
 
-The algorithms are described in detail in the accompanying publication [reference to be added]!!!
+The algorithms are described in detail in the accompanying publication Riedel, Frank; Torrente, Maria-Laura (2025) : Berge equilibria: An algebraic
+approach, Center for Mathematical Economics Working Papers, No. 750, Bielefeld University, Center
+for Mathematical Economics (IMW), Bielefeld. https://www.econstor.eu/bitstream/10419/324279/1/1931589682.pdf
 
 
 # Main Algorithm Files
