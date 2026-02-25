@@ -1,7 +1,7 @@
 # BergeEquilibria
 Code for the computation of Berge equilibria.
 
-This package includes the implementation of three algorithms for computing Berge equilibria in regular finite normal-form games. 
+This package includes the implementation of various algorithms for computing Berge equilibria in regular finite normal-form games. 
 
 The algorithms are written in CoCoA http://cocoa.dima.unige.it (version 5.4.1, freely available under the GNU General Public License) and are capable of handling games with any number of players and strategies.
 
@@ -14,6 +14,7 @@ for Mathematical Economics (IMW), Bielefeld. https://www.econstor.eu/bitstream/1
 - AllBerge.cocoa5 — Computes all Berge equilibria (including pure and mixed).
 - MixedBerge.cocoa5 — Computes completely mixed Berge equilibria.
 - PureBerge.cocoa5 — Computes pure-strategy Berge equilibria.
+- ExistenceCMBE.cocoa5 - Determines the existence of completely mixed Berge equilibria.
   
 Each file contains the code to identify the respective equilibria using polynomial systems.
 
