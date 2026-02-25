@@ -1,0 +1,98 @@
+------------------------------------------------------------------------------------------------------------
+-- Main code for determining the existence of completely mixed Berge equilibria for a regular game
+-- N = number of players
+-- d+1 = number of strategies for all players
+-- ValuesU = vector of payoff functions
+------------------------------------------------------------------------------------------------------------
+
+Define ExistenceCMBE(N,d,ValuesU)
+  NumCMBE:=0;
+
+  ListD:=[0..d|I In 1..N];
+  ProdD:=CartesianProductList(ListD);               ---[0..d]^N
+  ProdDI:=CartesianProductList(WithoutNth(ListD,1));---[0..d]^{N-1}
+  
+  For I:=1 To N Do
+    --construct the variables Z
+    Z:=[];
+    Seq0:=[0|El In 1..N-1];
+    For J:=0 To d Do
+      Seq:=Seq0;
+      ZJ:=[];
+      If I<N Then
+	insert(ref Seq,I,J);
+      Else
+	append(ref Seq,J);
+      EndIf;
+      Pos:=1;
+      While (not(ProdD[Pos]=Seq)) Do
+	  Pos:=Pos+1;
+      EndWhile;
+      Ui0:=ValuesU[I,Pos];
+      Foreach K In ProdDI Do
+	If not(K=Seq0) Then
+	  Seq2:=K;
+	  If I<N Then
+	    insert(ref Seq2,I,J);
+	  Else
+	    append(ref Seq2,J);
+	  EndIf;
+	  Pos:=1;
+	  While (not(ProdD[Pos]=Seq2)) Do
+	    Pos:=Pos+1;
+	  EndWhile;
+	  append(ref ZJ,ValuesU[I,Pos]-Ui0);
+	EndIf;
+      EndForeach;
+      append(ref Z,ZJ);	
+    EndFor;
+
+     --construct the matrix A
+    A:=Mat(Z);
+    A:=transposed(A);
+    A:=ConcatVer(Mat([[1|KK In 0..d]]),A);
+
+    --construct and evaluate f_l
+    If N>2 Then 
+      Rows := subsets(2..NumRows(A), d+1);
+      Foreach R In Rows Do
+	Df:=det(submat(A, R, 1..(d+1)));
+	If not(Df=0) Then
+	  Return NumCMBE;              -- completely mixed Berge equilibria do not exist
+	EndIf;
+      EndForeach;
+    EndIf;
+
+    --construct and evaluate g_l
+    Li := [0|II In 1..d+1];
+    Dgi := 0;
+    Rows := subsets(2..NumRows(A), d);
+    Rows := [concat([1],R)|R In Rows];
+    Foreach R In Rows Do
+      Dg:=det(submat(A, R, 1..(d+1)));
+      If not(Dg=0) Then
+	Li:=R;
+	Dgi:=Dg;
+	break;
+      EndIf;
+    EndForeach;
+
+    If Li = [0|II In 1..d+1] Then
+      Return NumCMBE;                  -- completely mixed Berge equilibria do not exist
+    Else
+      --construct and evaluate h_t
+      remove(ref Li, 1);
+      For t:=0 To d Do
+	Dh:=det(submat(A, Li, WithoutNth(1..(d+1),t+1)));
+	sigmat:=(-1)^t*Dh/Dgi;
+	If sigmat<=0 Then
+	  Return NumCMBE;             -- completely mixed Berge equilibria do not exist
+	EndIf;
+      EndFor;
+    EndIf;
+  EndFor;
+  NumCMBE:=1;
+  Return NumCMBE;                     -- the game admits unique completely mixed Berge equilibrium
+EndDefine; -- ExistenceCMBE
+
+
